@@ -25,7 +25,9 @@ BATCH_SIZE = args.batch_size
 def ranklist_by_heapq(user_pos_test, test_items, rating, Ks):
     item_score = {}
     for i in test_items:
-        item_score[i] = rating[i]
+        item_score[i] = rating[i]      #rating是一维数值，表示一个用户对所有测试物品的评分
+    print("*********************************************************************************")
+    print(rating.shape)
 
     K_max = max(Ks)
     K_max_item_score = heapq.nlargest(K_max, item_score, key=item_score.get)
@@ -87,6 +89,7 @@ def get_performance(user_pos_test, r, auc, Ks):
 def test_one_user(x):
     # user u's ratings for user u
     rating = x[0]
+    print("rating：",rating)
     #uid
     u = x[1]
     #user u's items in the training set
@@ -179,6 +182,11 @@ def test(model, users_to_test, drop_flag=False, batch_test_flag=False):
                 rate_batch = model.rating(u_g_embeddings, pos_i_g_embeddings).detach().cpu()
 
         user_batch_rating_uid = zip(rate_batch.numpy(), user_batch)
+        print("user_batch_rating_uid:",user_batch_rating_uid.shape)
+
+        #pool.map：对批次中的所有用户并行调用test_one_user方法
+        #test_one_user:针对每个用户进行评估
+        #batch是一个字典包含每个用户的指标评估
         batch_result = pool.map(test_one_user, user_batch_rating_uid)
         count += len(batch_result)
 

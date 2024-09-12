@@ -83,8 +83,8 @@ class NGCF(nn.Module):
 
     def create_bpr_loss(self, users, pos_items, neg_items):
         pos_scores = torch.sum(torch.mul(users, pos_items), axis=1)
-        print("-----------------------------------------------------------")
-        print(pos_scores)
+        # print("-----------------------------------------------------------")
+        # print(pos_scores)
         neg_scores = torch.sum(torch.mul(users, neg_items), axis=1)
 
         maxi = nn.LogSigmoid()(pos_scores - neg_scores)
